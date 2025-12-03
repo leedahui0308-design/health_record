@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>개인 건강기록</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f4f7fb; margin:0; padding:0;}
+.container { max-width: 400px; margin:30px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 8px rgba(0,0,0,0.1); }
+h2 { text-align:center; }
+label { display:block; margin-top:10px; font-weight:bold; }
+input, textarea { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
+button { width:100%; margin-top:15px; padding:10px; border:none; border-radius:8px; background:#2b7cff; color:white; font-size:16px; }
+.saved { text-align:center; color:green; margin-top:10px; display:none; }
+</style>
+</head>
+<body>
+<div class="container">
+<h2>개인 건강기록</h2>
+
+<label>이름</label>
+<input id="name">
+
+<label>병력 / 복용약 / 알러지</label>
+<textarea id="history"></textarea>
+
+<label>다니는 병원</label>
+<input id="hospital">
+
+<label>보호자 연락처 및 관계</label>
+<input id="guardian">
+
+<label>기타사항</label>
+<textarea id="note"></textarea>
+
+<button onclick="saveData()">저장</button>
+<div class="saved" id="msg">저장 완료!</div>
+</div>
+<script>
+const KEY = location.pathname;
+function saveData(){
+  const data = {
+    name: name.value,
+    history: history.value,
+    hospital: hospital.value,
+    guardian: guardian.value,
+    note: note.value
+  };
+  localStorage.setItem(KEY, JSON.stringify(data));
+  document.getElementById("msg").style.display = "block";
+}
+window.onload = function(){
+  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+  name.value = saved.name || "";
+  history.value = saved.history || "";
+  hospital.value = saved.hospital || "";
+  guardian.value = saved.guardian || "";
+  note.value = saved.note || "";
+}
+</script>
+</body>
+</html>
