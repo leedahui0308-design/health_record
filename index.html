@@ -1,54 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>개인 건강기록</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>건강기록 QR 코드 40개</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f5f7fa; margin:20px; }
+  h1 { text-align:center; }
+  #grid { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; }
+  .card { width:170px; background:#fff; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08); padding:10px; text-align:center; }
+  .card p { margin:6px 0 8px 0; font-weight:600; }
+  canvas { width:150px; height:150px; display:block; margin:0 auto; }
+  a.link { display:block; font-size:12px; color:#0b66c3; text-decoration:none; margin-top:6px; word-break:break-all; }
+  .note { text-align:center; color:#666; margin-top:14px; font-size:14px; }
+</style>
+
+<!-- 간단 오프라인 QR 생성기 (내장) -->
+
 </head>
 <body>
-<h2>개인 건강기록</h2>
-<p>본인 번호를 선택하세요</p>
-<ul>
-  <li><a href="health_record_01.html">1번</a></li>
-  <li><a href="health_record_02.html">2번</a></li>
-  <li><a href="health_record_03.html">3번</a></li>
-  <li><a href="health_record_04.html">4번</a></li>
-  <li><a href="health_record_05.html">5번</a></li>
-  <li><a href="health_record_06.html">6번</a></li>
-  <li><a href="health_record_07.html">7번</a></li>
-  <li><a href="health_record_08.html">8번</a></li>
-  <li><a href="health_record_09.html">9번</a></li>
-  <li><a href="health_record_10.html">10번</a></li>
-  <li><a href="health_record_11.html">11번</a></li>
-  <li><a href="health_record_12.html">12번</a></li>
-  <li><a href="health_record_13.html">13번</a></li>
-  <li><a href="health_record_14.html">14번</a></li>
-  <li><a href="health_record_15.html">15번</a></li>
-  <li><a href="health_record_16.html">16번</a></li>
-  <li><a href="health_record_17.html">17번</a></li>
-  <li><a href="health_record_18.html">18번</a></li>
-  <li><a href="health_record_19.html">19번</a></li>
-  <li><a href="health_record_20.html">20번</a></li>
-  <li><a href="health_record_21.html">21번</a></li>
-  <li><a href="health_record_22.html">22번</a></li>
-  <li><a href="health_record_23.html">23번</a></li>
-  <li><a href="health_record_24.html">24번</a></li>
-  <li><a href="health_record_25.html">25번</a></li>
-  <li><a href="health_record_26.html">26번</a></li>
-  <li><a href="health_record_27.html">27번</a></li>
-  <li><a href="health_record_28.html">28번</a></li>
-  <li><a href="health_record_29.html">29번</a></li>
-  <li><a href="health_record_30.html">30번</a></li>
-  <li><a href="health_record_31.html">31번</a></li>
-  <li><a href="health_record_32.html">32번</a></li>
-  <li><a href="health_record_33.html">33번</a></li>
-  <li><a href="health_record_34.html">34번</a></li>
-  <li><a href="health_record_35.html">35번</a></li>
-  <li><a href="health_record_36.html">36번</a></li>
-  <li><a href="health_record_37.html">37번</a></li>
-  <li><a href="health_record_38.html">38번</a></li>
-  <li><a href="health_record_39.html">39번</a></li>
-  <li><a href="health_record_40.html">40번</a></li>
-</ul>
+<h1 style="text-align:center">건강기록 QR 코드 (로컬용)</h1>
+<p class="note" style="text-align:center">스캔하면 같은 폴더의 <code>record_01.html ~ record_40.html</code> 파일을 엽니다.</p>
+
+<div id="grid"></div>
+
+
+
+<script>
+const SERVER_URL = "https://script.google.com/macros/s/AKfycbzvGtGB_Ab082d4jbaC909Wih-_jzCZek3ZmxJ5CiUSjbSJnA1jgz9VSCuZNkyB4hWs9g/exec";
+const USER_ID = location.pathname.split("/").pop().replace(".html","");
+
+function saveData() {
+  const data = {
+    id: USER_ID,
+    name: document.getElementById("name").value,
+    history: document.getElementById("history").value,
+    hospital: document.getElementById("hospital").value,
+    guardian: document.getElementById("guardian").value,
+    memo: document.getElementById("etc").value
+  };
+  fetch(SERVER_URL, { method: "POST", body: JSON.stringify(data) });
+}
+
+function loadData() {
+  fetch(SERVER_URL + "?id=" + USER_ID)
+    .then(res => res.json())
+    .then(data => {
+      if (!data) return;
+      name.value = data.name || "";
+      history.value = data.history || "";
+      hospital.value = data.hospital || "";
+      guardian.value = data.guardian || "";
+      etc.value = data.memo || "";
+    });
+}
+
+document.querySelectorAll("input, textarea").forEach(el => el.addEventListener("input", saveData));
+loadData();
+</script>
+
 </body>
 </html>
-

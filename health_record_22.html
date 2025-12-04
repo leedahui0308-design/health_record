@@ -1,61 +1,73 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>개인 건강기록</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>개인 건강기록 - 사용자 22</title>
 <style>
-body { font-family: Arial, sans-serif; background:#f4f7fb; margin:0; padding:0;}
-.container { max-width: 400px; margin:30px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 8px rgba(0,0,0,0.1); }
-h2 { text-align:center; }
-label { display:block; margin-top:10px; font-weight:bold; }
-input, textarea { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
-button { width:100%; margin-top:15px; padding:10px; border:none; border-radius:8px; background:#2b7cff; color:white; font-size:16px; }
-.saved { text-align:center; color:green; margin-top:10px; display:none; }
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin:0; padding:20px; }
+    .container { max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:12px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+    h2 { text-align:center; }
+    label { font-weight:bold; margin-top:12px; display:block; }
+    textarea, input { width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid #ccc; font-size:15px; }
+    .save-info { text-align:center; margin-top:15px; color:#666; font-size:14px; }
 </style>
 </head>
 <body>
 <div class="container">
-<h2>개인 건강기록</h2>
+    <h2>개인 건강기록 - 사용자 22</h2>
 
-<label>이름</label>
-<input id="name">
+    <label>이름</label>
+    <input type="text" id="name" />
 
-<label>병력 / 복용약 / 알러지</label>
-<textarea id="history"></textarea>
+    <label>병력 (복용 중인 약물, 알러지 등)</label>
+    <textarea id="history" rows="4"></textarea>
 
-<label>다니는 병원</label>
-<input id="hospital">
+    <label>다니는 병원</label>
+    <textarea id="hospital" rows="3"></textarea>
 
-<label>보호자 연락처 및 관계</label>
-<input id="guardian">
+    <label>보호자 연락처 및 관계</label>
+    <textarea id="guardian" rows="3"></textarea>
 
-<label>기타사항</label>
-<textarea id="note"></textarea>
+    <label>기타사항</label>
+    <textarea id="etc" rows="3"></textarea>
 
-<button onclick="saveData()">저장</button>
-<div class="saved" id="msg">저장 완료!</div>
+    <p class="save-info">※ 입력한 내용은 자동 저장됩니다.</p>
 </div>
+
+
 <script>
-const KEY = location.pathname;
-function saveData(){
+const SERVER_URL = "https://script.google.com/macros/s/AKfycbzvGtGB_Ab082d4jbaC909Wih-_jzCZek3ZmxJ5CiUSjbSJnA1jgz9VSCuZNkyB4hWs9g/exec";
+const USER_ID = location.pathname.split("/").pop().replace(".html","");
+
+function saveData() {
   const data = {
-    name: name.value,
-    history: history.value,
-    hospital: hospital.value,
-    guardian: guardian.value,
-    note: note.value
+    id: USER_ID,
+    name: document.getElementById("name").value,
+    history: document.getElementById("history").value,
+    hospital: document.getElementById("hospital").value,
+    guardian: document.getElementById("guardian").value,
+    memo: document.getElementById("etc").value
   };
-  localStorage.setItem(KEY, JSON.stringify(data));
-  document.getElementById("msg").style.display = "block";
+  fetch(SERVER_URL, { method: "POST", body: JSON.stringify(data) });
 }
-window.onload = function(){
-  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
-  name.value = saved.name || "";
-  history.value = saved.history || "";
-  hospital.value = saved.hospital || "";
-  guardian.value = saved.guardian || "";
-  note.value = saved.note || "";
+
+function loadData() {
+  fetch(SERVER_URL + "?id=" + USER_ID)
+    .then(res => res.json())
+    .then(data => {
+      if (!data) return;
+      name.value = data.name || "";
+      history.value = data.history || "";
+      hospital.value = data.hospital || "";
+      guardian.value = data.guardian || "";
+      etc.value = data.memo || "";
+    });
 }
+
+document.querySelectorAll("input, textarea").forEach(el => el.addEventListener("input", saveData));
+loadData();
 </script>
+
 </body>
 </html>
